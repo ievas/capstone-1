@@ -1,0 +1,131 @@
+﻿Language Learning App Proposal
+
+
+1. What goal will your website be designed to achieve?
+
+
+The website is going to welcome users to practise their Spanish and/or English skills. 
+
+
+It is a language learning app that helps users to master their text building skills; put together spelling with pronunciation; practise correct pronunciation and spelling; widen their vocabulary. 
+
+
+A small assessment test is given in the beginning. Based on that, the user is assigned to a corresponding learning level where different tasks are given. The app also saves user progress and cheers them up when a certain advancement is made.
+
+
+The site is aiming to replicate Duolingo's functionality using just the Merriam-Webster Spanish-English API. 
+
+
+2. What kind of users will visit your site? In other words, what is the demographic of your users? 
+
+
+People preparing to travel, people willing to boost up their communicative skills, people who learn languages as a hobby, people preparing for a language lesson at school. 
+Levels could be grouped both by themes and difficulty. Users would choose which area to practise in.
+
+
+3. What data do you plan on using? You may have not picked your actual API yet, which is fine, just outline what kind of data you would like it to contain. 
+
+
+        I'm using the Merriam-Webster Spanish-English API. 
+
+
+1. I will send a word and get back it's translation.
+2. I will need audio pronunciations.
+3. I would like to be able to get a random word from a list of words that have a certain label to be able to offer words based on a category (etc. travel, restaurant, school). I would use subject/status (SLS) labels for that.
+4. To build a sentence I would need examples of usage of a word (verbal illustration (VIS label, TR label)).
+
+
+(Should I make my own lists of words to teach for each level and a list of sentences to teach? It will be a challenge to let users build sentences. I might need to find another API for that or build a separate database. Data I can get from the dictionary api is not grouped by difficulty level; I have to develop a structure for language learning.)
+
+
+
+
+
+
+
+
+4. In brief, outline your approach to creating your project (knowing that you may not know everything in advance and that these details might change later). Answer questions like the ones below, but feel free to add more information:
+ 
+a. What does your database schema look like? 
+        users:
+                user id
+                username
+hashed password
+                first name
+                last name
+email
+points (user gets a point for each correct answer)
+language that the user is learning
+
+
+
+
+levels:
+        level id
+        points for entering the level
+        words (would I store words?)
+        sentences(?)
+
+
+achievements:
+        achievement id
+        achievement name (for example, days in streak; no mistakes)
+        achievement icon
+
+
+users/levels:
+        id
+        level id
+        user id
+
+
+users/achievements
+        id
+        achievement id
+        user id
+
+
+        
+b. What kinds of issues might you run into with your API? 
+
+
+1. levels; 
+2. sentence building; 
+3. switching between languages; 
+4. to implement achievements you have to check on different parameters. Each might come with it's own challenges. For example, to award someone with “3 days in a row” I have to set time and date for when the user starts learning + when each day starts and ends + check if they made any progress during each 24h. 
+
+
+c. Is there any sensitive information you need to secure? 
+
+
+Passwords. Email addresses and names of users.
+
+
+d. What functionality will your app include? 
+Register, log in, log out, edit user information, switch between languages, get tasks, get feedback, user progress stored, achievements announced, audio pronunciation and translation shown when hovering over a word.
+
+
+e. What will the user flow look like? 
+
+
+User would 
+1) register; 
+2) get automatically logged in; 
+3) choose a language to learn; 
+4) choose between level 1 or taking a short placement test; 
+5) start learning: 
+a) gets a word to translate, audio to listen to or a sentence to build; 
+b) writes solution in an input field; 
+c) gets feedback 
+d) clicks “go to next” or “save progress and quit”
+
+
+f. What features make your site more than CRUD? Do you have any stretch goals?
+
+
+Level logic and achievement logic.
+
+
+Stretch goals:
+I would like to add a chat bot for communication skills practice.
+I would like to add animations when announcing a correct or wrong answer to users.
