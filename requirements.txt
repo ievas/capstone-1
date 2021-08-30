@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+ipython
+sqlalchemy
+flask-bcrypt
+Flask-DebugToolbar
+flask_wtf
+requests
+randomword

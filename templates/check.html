@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{%if guess != translation%}
+    <p style="margin-top: 20px">Your answer <span class="guess">{{guess}} </span>is wrong :(</p>
+    <p>The correct answer is <span class="translation">{{translation}}</span><button class="audio" onclick="pronounce()">&#x1f50a</button></p>
+    {%else%}
+    <p>Your answer <span class="guess">{{guess}}</span><button class="audio" onclick="pronounce()">&#x1f50a</button> is correct :)</p>
+    {%endif%}
+
+
+    <a href="/challenge" style="color: whitesmoke;" class="btn btn-info">Back</a>
+
+{% endblock %}

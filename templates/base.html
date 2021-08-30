@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Panico</title>
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/bootstrap"></script>
+
+  <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  <link rel="stylesheet" href="/static/stylesheets/style.css">
+</head>
+
+<body>
+<nav class="navbar navbar-expand">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand">
+        <!-- <img src="/static/images/—Pngtree—screaming woman vector_2741567.png" alt="logo" width="90px">
+        <a href='https://pngtree.com/so/woman-vector'></a> -->
+      </a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      {% if not g.user %}
+      <li><a href="/signup">Sign up</a></li>
+      <li><a href="/login">Log in</a></li>
+      {% else %}
+      <li>
+        <a href="/users/{{ g.user.id }}">
+          <!-- <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}"> -->
+        </a>
+      </li>
+      <li><a href="/logout">Log out</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+
+
+<script src="/static/app.js"></script>
+</body>
+</html>

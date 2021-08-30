@@ -1,0 +1,23 @@
+body {
+    text-align: center;
+    background-color: ghostwhite;
+}
+
+.translation {
+    color: lightskyblue;
+    font-size: 45px;
+    margin: 5px;
+}
+
+.guess {
+    color: orange;
+    font-size: 45px;
+    margin: 5px;
+}
+
+.audio {
+    border: none;
+    background: none;
+    margin-left: 5px;
+    font-size: 35px;
+}

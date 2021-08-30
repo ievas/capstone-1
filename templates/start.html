@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Translate this:</h1>
+
+
+<p style="color: teal; font-size: 55px; margin: 10px">{{word}}</p>
+
+
+
+
+<form method="POST" id="translate-form" data-word="{{word}}">
+    <label for=""></label>
+
+    {{ form.hidden_tag() }}
+
+
+        {% for field in form if field.widget.input_type != 'hidden' %}
+          {% for error in field.errors %}
+            <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+          {{ field(placeholder="Enter your translation", class="form-control") }}
+        {% endfor %}
+
+        <button class="btn btn-success" style="margin-top: 10px">Try</button>
+
+    
+    <!-- {%if guess != translation%}
+    <p style="margin-top: 20px">Your answer <span class="guess">{{guess}} </span>is wrong :(</p>
+    <p>The correct answer is <span class="translation">{{translation}}</span></p>
+    {%else%}
+    <p>Your answer <span class="guess">{{guess}} </span>is correct :)</p>
+    {%endif%} -->
+    
+</form>
+
+
+
+{% endblock %}
