@@ -3,9 +3,12 @@ from flask_debugtoolbar import DebugToolbarExtension
 import requests
 import random
 import os
+import time
 
-from models import db, connect_db
-from forms import TranslationForm
+from models import db, connect_db, User, Level, Streak, Badge
+from forms import TranslationForm, RegisterForm, SignInForm
+
+from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
@@ -81,11 +84,13 @@ def add_user_to_global():
     else:
         g.user = None
 
-def login(user):
+def signin(user):
+    """Sign in."""
 
     session[CURRENT_KEY] = user.id
 
-def logout():
+def signout():
+    """Sign out."""
     if CURRENT_KEY in session:
         del session[CURRENT_KEY]
 
@@ -97,6 +102,76 @@ def home():
     """Home page."""
 
     return render_template('home.html')
+
+
+@app.route('/register')
+def show_register_form():
+    form = RegisterForm()
+    return render_template('register.html', form = form)
+
+
+@app.route('/register', methods=["POST"])
+def register():
+    if CURRENT_KEY in session:
+        del session[CURRENT_KEY]
+
+    form = RegisterForm()
+    if form.validate_on_submit():
+        try:
+            user = User.register(
+                username=form.username.data,
+                password=form.password.data,
+                email=form.email.data,
+                first_name = form.first_name.data,
+                last_name = form.last_name.data,
+                points = 0,
+            )
+
+            db.session.commit()
+
+        except IntegrityError as e:
+            flash("Username already taken", 'danger')
+            return render_template('/register.html', form=form)
+        
+        signin(user)
+
+        return redirect("/")
+    else:
+        return redirect('/register', form=form)
+
+@app.route('/signin')
+def show_sign_in():
+    """Show log in form"""
+
+    form = SignInForm()
+
+    return render_template("/signin.html", form=form)
+
+
+@app.route('/signin', methods=["POST"])
+def sign_in():
+    """Handle login"""
+
+    form = SignInForm()
+
+    if form.validate_on_submit():
+        user = User.authenticate(form.username.data, form.password.data)
+
+        if user:
+            signin(user)
+            return redirect("/challenge")
+
+    return render_template('/signin.html', form = form)
+
+@app.route('/signout')
+def logout():
+    """Handle logout"""
+    signout()
+
+    flash("You have successfully signed out.", 'success')
+    return redirect("/")
+
+
 
 @app.route('/challenge', methods=["GET"])
 def challenge_page():
@@ -130,8 +205,12 @@ def check_answer():
     return render_template('check.html', form=form, word=word, guess=guess, translation=translation)
   
   else:
+    word = get_a_word()
+    form = TranslationForm(word=word)
     return render_template('start.html', word=word, form=form)
 
+
+# @app.route('/progress')
 
 
 

@@ -7,3 +7,5 @@ Flask-DebugToolbar
 flask_wtf
 requests
 randomword
+WTForms
+wtforms-validators

@@ -1,5 +1,6 @@
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -14,7 +15,35 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
     points = db.Column(db.Integer)
-    register_date = db.Column(db.Date)
+    register_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+
+    @classmethod
+    def register(cls, username, password, email, first_name, last_name, points):
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('UTF-8')
+
+        user = User(username=username,
+            email=email,
+            password=hashed_password,
+            first_name=first_name,
+            last_name = last_name,
+            points = points
+            )
+
+        db.session.add(user)
+
+        return user
+
+    @classmethod
+    def authenticate(cls, username, password):
+        user = cls.query.filter_by(username=username).first()
+
+        if user:
+            is_auth = bcrypt.check_password_hash(user.password, password)
+            if is_auth:
+                return user
+        return False
+
 
 class Level(db.Model):
     __tablename__ = 'levels'

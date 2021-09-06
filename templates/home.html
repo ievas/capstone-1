@@ -2,10 +2,23 @@
 {% block content %}
     <div>
         <h1>Welcome to the Language App</h1>
-        <!-- <h2>It's time to code.</h2> -->
+
+
+        {% if not g.user %}
+            <br>
+            <a href="/signin">Sign in</a>
+            <br>
+            <a href="/register">Register</a>
+        {% else %}
+
         <br>
-        <a href="/challenge">Sign in</a>
-        <h6>Register</h6>
+        <li>Continue to <a href="/challenge">Level 1</a></li>
+        <br>
+        <li><a href="/{{g.user.username}}">See your progress</a></li>
+
+        {% endif %}
+        
+        
     </div>
     
 {% endblock %}

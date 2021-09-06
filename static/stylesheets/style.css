@@ -1,6 +1,7 @@
 body {
     text-align: center;
     background-color: ghostwhite;
+    padding: 15px;
 }
 
 .translation {
@@ -20,4 +21,14 @@ body {
     background: none;
     margin-left: 5px;
     font-size: 35px;
+}
+
+a {
+    margin: 10px;
+    text-decoration: none;
+    color: grey;
+}
+
+.username {
+    font-size: larger;
 }
