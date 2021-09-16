@@ -5,7 +5,7 @@ import random
 import os
 import time
 
-from models import db, connect_db, User, Level, Streak, Badge
+from models import db, connect_db, User, Level, Streak, Badge, UserBadge
 from forms import TranslationForm, RegisterForm, SignInForm
 
 from sqlalchemy.exc import IntegrityError
@@ -49,20 +49,27 @@ def read_words(path):
     return words
 
 
-def get_a_word():
+def get_a_word(curr_level):
 
-    words = read_words("words_lvl_1.txt")
+    words = read_words(f"words_lvl_{curr_level}.txt")
+
+
 
     word = random.choice(words)
 
-    return word
+    if word != None:
+        return word
+    else:
+        word = random.choice(words)
+
 
 
 
 
 def translate_a_word(word):
+    print(KEY)
     res = requests.get(f"{API_BASE_URL}/{word}", params={'key':KEY})
-
+    print(res)
     data = res.json()
 
     shortdef = data[0]['shortdef'][0]
@@ -72,6 +79,7 @@ def translate_a_word(word):
     # sound_file_name = data[0]['hwi']['prs'][0]['sound'][0]
 
     translation = shortdef.split(",")[0]
+    translation = translation.split(" ")[0]
 
     return translation
 
@@ -101,6 +109,12 @@ def signout():
 def home():
     """Home page."""
 
+    if g.user:
+        current_level = g.user.current_level_id
+        return render_template('home.html', level = current_level)
+
+    
+
     return render_template('home.html')
 
 
@@ -125,13 +139,21 @@ def register():
                 first_name = form.first_name.data,
                 last_name = form.last_name.data,
                 points = 0,
+                current_level_id = 1
             )
+
+            
 
             db.session.commit()
 
         except IntegrityError as e:
             flash("Username already taken", 'danger')
             return render_template('/register.html', form=form)
+
+        # user_level = UserLevel(user_id = user.id, level_id = 1)
+
+        # db.session.add_all([user_level])
+        # db.session.commit()
         
         signin(user)
 
@@ -176,7 +198,9 @@ def logout():
 @app.route('/challenge', methods=["GET"])
 def challenge_page():
     """Get a challenge"""
-    word = get_a_word()
+    # find out the level
+    user = User.query.get(session[CURRENT_KEY])
+    word = get_a_word(user.current_level_id)
 
     form = TranslationForm(word=word)
     
@@ -202,15 +226,86 @@ def check_answer():
 
     translation = translate_a_word(word)
 
+    if g.user:
+        if guess == translation:
+            user = User.query.get(session[CURRENT_KEY])
+            user.points = user.points + 1
+            db.session.commit()
+            
+            if user.points == 3:
+                
+                flash("You earned the Pioneer badge and move to Level 2!", "success")
+                badge = Badge.query.filter_by(name='pioneer').first()
+               
+                user.current_level_id = user.current_level_id + 1
+                
+                pioneer_badge = UserBadge(user_id=user.id, badge_id=badge.id)
+
+                db.session.add(pioneer_badge)
+                db.session.commit()
+
+            if user.points == 10:
+                flash("Great work! You move to Level 3.", "success")
+                user.current_level_id = user.current_level_id + 1
+                db.session.commit()
+            
+            if user.points == 15:
+                flash("You earned the Prodigy badge!", "success")
+                badge = Badge.query.filter_by(name='prodigy').first()
+                prodigy_badge = UserBadge(user_id=user.id, badge_id=badge.id)
+                db.session.add(prodigy_badge)
+                db.session.commit()
+
     return render_template('check.html', form=form, word=word, guess=guess, translation=translation)
+    # return redirect("/challenge/" + translation)
   
   else:
-    word = get_a_word()
+    
+    user = User.query.get(session[CURRENT_KEY])
+
+    word = get_a_word(user.current_level_id)
     form = TranslationForm(word=word)
     return render_template('start.html', word=word, form=form)
 
+# @app.route('/challenge/<word>')
+# def solution(word):
 
-# @app.route('/progress')
+#     return render_template('check.html', form=form, word=word, guess=guess, translation=translation)
+
+
+
+
+@app.route('/profile')
+
+def show_user_details():
+    """Show user profile information and progress"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    
+    user = User.query.get(session[CURRENT_KEY])
+
+    curr_level_id = user.current_level_id
+
+    level_name = Level.query.get(curr_level_id).name
+
+    user_badges = UserBadge.query.filter_by(user_id=user.id).all()
+
+
+    badge_list = []
+    icon_list = []
+
+    for obj in user_badges:
+        badge_list.append(Badge.query.get(obj.badge_id).name)
+        icon_list.append(Badge.query.get(obj.badge_id).icon_url)
+        print(badge_list)
+
+    # badges = Badge.query.filter_by(id = user_badges).all()
+
+
+    return render_template('details.html', user=user, level = level_name, badges=badge_list, icons=icon_list)
 
 
 

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-md-center">
+    <h1>{{user.username}}'s Achievements</h1>
+    <br>
+
+    
+
+    <div class="achievements">
+        <h4>Current level: <a href="/challenge"><span style="margin-left: 75px;">{{level}}</span></a></h4>
+        {%if badges%}
+        <h4 style="margin-top: 30px;">Badges: 
+            <ul class="badge-list">
+                {%for i in range(badges|length)%}
+                    <li style="margin-left: 75px;">
+                
+                            <img style="margin:20px" width="80px" src={{icons[i]}}>
+                       
+                        {{badges[i].capitalize()}}
+                    </li>
+                {%endfor%}
+            </ul>
+    
+        </h4>
+        {%endif%}
+    
+
+    
+
+        </div>
+</div>
+{% endblock %}

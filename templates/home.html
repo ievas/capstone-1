@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <div>
-        <h1>Welcome to the Language App</h1>
+        <h1>Keep calm and learn Spanish.</h1>
 
 
         {% if not g.user %}
@@ -12,9 +12,9 @@
         {% else %}
 
         <br>
-        <li>Continue to <a href="/challenge">Level 1</a></li>
+        <li>Continue to <a href="/challenge">Level {{level}}</a></li>
         <br>
-        <li><a href="/{{g.user.username}}">See your progress</a></li>
+        <li><a href="/profile">See your progress</a></li>
 
         {% endif %}
         

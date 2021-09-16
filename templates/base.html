@@ -20,25 +20,34 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a href="/" class="navbar-brand">
-        <img src="/static/images/—Pngtree—red stop and panic button_5211687.png" alt="logo" width="90px">
-        <a href='https://pngtree.com/so/woman-vector'></a>
+        <img src="/static/images/panic.png" alt="logo" width="90px">
+        <!-- <div>Icons made by <a href="https://www.flaticon.com/authors/swifticons" title="Swifticons">Swifticons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
       </a>
+      <a href="/" class="navbar-brand"><h1 id="title">pánico</h1></a>
     </div>
     <ul class="nav navbar-nav navbar-right">
       {% if not g.user %}
       <li><a href="/register">Register</a></li>
       <li><a href="/signin">Sign in</a></li>
       {% else %}
+      
+      <li id="point-bar"><span id="circle-text">{{g.user.points}}</span></li>
       <li>
-        <a href="/{{ g.user.username }}" class="username">
+        <a href="/profile" class="username">
           {{g.user.username}}
         </a>
       </li>
+      
       <li><a href="/signout">Sign out</a></li>
       {% endif %}
     </ul>
   </div>
 </nav>
+
+
+{% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
 
 {% block content %}
 {% endblock %}
