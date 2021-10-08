@@ -5,4 +5,22 @@ function pronounce(){
 }
 
 
+function toggleDiv(id){
+    let div = document.getElementById(id);
+    div.style.visibility = div.style.visibility == "visible" ? "hidden" : "visible";
+}
+
+let form = $('#translate-form');
+let textarea = document.querySelector("textarea");
+
+
+checkButton = document.getElementById("check");
+
+checkButton.addEventListener("click", function(e){
+    
+    e.preventDefault();
+    form.submit()
+})
+
+
 

@@ -5,7 +5,7 @@
 <div class="row justify-content-md-center">
     <div class="col-md-7 col-lg-5">
       <h2 class="join-message">Register here.</h2>
-      <form method="POST" id="user_form">
+      <form method="POST" id="user_form" style="margin-top: 35px;">
         {{ form.hidden_tag() }}
   
         {% for field in form if field.widget.input_type != 'hidden' %}
@@ -15,7 +15,7 @@
           {{ field(placeholder=field.label.text, class="form-control") }}
         {% endfor %}
   
-        <button class="btn btn-primary btn-lg btn-block">Save</button>
+        <button class="btn btn-primary btn-lg btn-block" style="border: none; margin-top:10px; text-transform: uppercase; color: ghostwhite; background-color: #93CCEA;">Save</button>
       </form>
     </div>
   </div>

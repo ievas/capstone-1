@@ -2,13 +2,17 @@
 {% block content %}
 
 {%if guess != translation%}
-    <p style="margin-top: 20px">Your answer <span class="guess">{{guess}} </span>is wrong :(</p>
-    <p>The correct answer is <span class="translation">{{translation}}</span><button class="audio" onclick="pronounce()">&#x1f50a</button></p>
+
+
+    
+
+    <p style="margin-top: 20px">Your answer <span class="guess">{{guess}} </span>is wrong</p>
+    <p>The correct answer is <span class="translation" onmouseover="pronounce()">{{translation}}</span></p>
     {%else%}
-    <p>Your answer <span class="guess">{{guess}}</span><button class="audio" onclick="pronounce()">&#x1f50a</button> is correct :)</p>
+    <p><span class="guess" onmouseover="pronounce()">{{guess}}</span></p>
     {%endif%}
 
 
-    <a href="/challenge" style="color: whitesmoke;" class="btn btn-info">Next</a>
+    
 
 {% endblock %}

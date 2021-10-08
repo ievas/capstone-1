@@ -13,37 +13,56 @@
   <link rel="stylesheet"
         href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
   <link rel="stylesheet" href="/static/stylesheets/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-<nav class="navbar navbar-expand">
-  <div class="container-fluid">
-    <div class="navbar-header">
+
+
+
+
+<nav class="navbar navbar-expand" style="background-color: #f8f8ff; border-bottom: 1px solid #e5e4e2;">
+   <div class="container-fluid">
+
+
+    <div class="navbar-header navbar-left">
       <a href="/" class="navbar-brand">
-        <img src="/static/images/panic.png" alt="logo" width="90px">
+        <img src="/static/images/panic.png" alt="logo" width="70px">
+        <div style="display: none;">Icons made by <a href="https://www.flaticon.com/authors/andy-horvath" title="Andy Horvath">Andy Horvath</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
         <!-- <div>Icons made by <a href="https://www.flaticon.com/authors/swifticons" title="Swifticons">Swifticons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
       </a>
-      <a href="/" class="navbar-brand"><h1 id="title">pánico</h1></a>
+      <!-- <a href="/" class="navbar-brand"><h1 id="title">pánico</h1></a> -->
     </div>
-    <ul class="nav navbar-nav navbar-right">
+
+
+    
+
       {% if not g.user %}
-      <li><a href="/register">Register</a></li>
-      <li><a href="/signin">Sign in</a></li>
+      <div class="nav navbar-nav navbar-right">
+      <a href="/register" style="text-transform: uppercase; font-size: 16px;">Register</a>
+      <a href="/signin" style="text-transform: uppercase; font-size: 16px;">Sign in</a>
+      </div>
       {% else %}
+
+    
+      <div class="nav navbar-nav navbar-center">
+        <div id="point-bar"><span id="circle-text">{{g.user.points}}</span></div>
+      </div>
       
-      <li id="point-bar"><span id="circle-text">{{g.user.points}}</span></li>
-      <li>
-        <a href="/profile" class="username">
-          {{g.user.username}}
-        </a>
-      </li>
-      
-      <li><a href="/signout">Sign out</a></li>
+      <div class="nav navbar-nav navbar-right"> 
+      <a href="/profile" style="color: #71A8C4">{{g.user.username}}</a>
+      <a href="/signout" style="text-transform: uppercase; font-size: 18px;">Sign out</a>
+      </div>
       {% endif %}
-    </ul>
+    </div>
   </div>
 </nav>
 
+
+
+
+<div class="card" style="width: 35rem; border: none; margin-top: 20px">
+  <div class="card-body">
 
 {% for category, message in get_flashed_messages(with_categories=True) %}
   <div class="alert alert-{{ category }}">{{ message }}</div>
@@ -51,6 +70,64 @@
 
 {% block content %}
 {% endblock %}
+</div>
+</div>
+
+<footer class="footer navbar-default" role="contentinfo">
+
+    
+    
+  
+      {%if guess%}
+        {%if guess != translation%}
+
+          <div class="wrong" style="display: flex; justify-content: space-around;
+          align-items: center;">
+
+            <img src="/static/images/thunder.png" alt="thunder" width="90px">
+            
+            <div>Correct translation: <span style="border: solid 1px #ff4f4f; margin:5px; padding:15px; border-radius: 50%;" onmouseover="pronounce()">{{translation}}</span></div>
+          
+            <a style="text-decoration: none; color: inherit;" href="/challenge">NEXT</a>
+          
+          </div>
+
+      {%elif guess == translation%}
+        <div class="correct" style="display: flex; justify-content: space-around;
+        align-items: center;">
+        
+              <img src="/static/images/sun.png" alt="sun" width="70px">
+              <div style="display:none">Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+            
+            <div style="letter-spacing: 3px;">Correct!</div>
+                <a href="/challenge">NEXT</a>
+        </div>
+
+      {%endif%}
+    {%else%}
+        {%if clean_footer%}
+        <div>YES.</div>
+        {%else%}
+          <div class="regular" style="display: flex; justify-content: space-around; align-items: center;">
+
+            <a href="/challenge" id="skip" style="text-decoration: none;
+              color: inherit;">SKIP</a>
+            
+            
+            <button id="hint-link" style="background: none; border:none; font-size: 20px;" onclick="toggleDiv('hint')">HINT</button>
+            
+            
+            
+            <button id="check" style="background: none; border: none">CHECK</button>
+          </div>
+          {%endif%}
+    {%endif%}
+
+
+    
+    
+  
+  </footer>
 
 
 <script src="/static/app.js"></script>

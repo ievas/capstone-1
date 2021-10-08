@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Translate this:</h1>
 
 
-<p style="color: teal; font-size: 55px; margin: 10px">{{word}}</p>
+<div class="card" style="width: 25rem; border: none;">
+  
+  <div class="card-body">
+    <h5 class="card-title">Translate this:</h5>
+
+    <div class="card-text"><p style="color: #77b5fe; font-size: 55px; margin: 10px" onmouseover="pronounce()">{{word}}</p></div>
 
 
+    <div id="hint">{{word_hint}}</div>
 
-
-<form method="POST" id="translate-form" data-word="{{word}}">
+<form id="translate-form" method="POST" data-word="{{word}}" >
     <label for=""></label>
 
     {{ form.hidden_tag() }}
@@ -19,11 +23,8 @@
           {% for error in field.errors %}
             <span class="text-danger">{{ error }}</span>
           {% endfor %}
-          {{ field(placeholder="Enter your translation", class="form-control") }}
+          {{ field(placeholder="", class="form-control", background_color="ghostwhite") }}
         {% endfor %}
-
-        <button class="btn btn-success" style="margin-top: 10px">Try</button>
-
     
     <!-- {%if guess != translation%}
     <p style="margin-top: 20px">Your answer <span class="guess">{{guess}} </span>is wrong :(</p>
@@ -33,7 +34,16 @@
     {%endif%} -->
     
 </form>
+</div>
+
+</div>
+
+
+
+
+
 
 
 
 {% endblock %}
+

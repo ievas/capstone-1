@@ -4,6 +4,7 @@ from wtforms.validators import InputRequired, Email, Length
 
 
 
+
 class TranslationForm(FlaskForm):
     """Form for entering a translation."""
 
@@ -18,6 +19,7 @@ class RegisterForm(FlaskForm):
     first_name = StringField('Firstname', validators=[InputRequired()])
     last_name = StringField('Lastname', validators=[InputRequired()])
     email = StringField('E-mail', validators=[InputRequired(), Email()])
+    
 
 
 class SignInForm(FlaskForm):

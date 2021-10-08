@@ -2,19 +2,42 @@
 {% block content %}
     <div>
         <h1>Keep calm and learn Spanish.</h1>
-
-
+        
         {% if not g.user %}
-            <br>
-            <a href="/signin">Sign in</a>
-            <br>
-            <a href="/register">Register</a>
+        <br>
+        <div>
+            <div style="margin: 25px;">
+                <a style="margin-right: 20px" href="/signin" class="dive" >Sign in</a>
+                <a style="margin-left: 20px" href="/register" class="dive">Register</a></div>
+        </div>
+    
+            
         {% else %}
 
-        <br>
-        <li>Continue to <a href="/challenge">Level {{level}}</a></li>
-        <br>
-        <li><a href="/profile">See your progress</a></li>
+        <p style="margin-top: 40px;">
+            <a href="/challenge"><h7 class="dive">Let's dive in!</h7></a>
+            <!-- <p id="dive-arrow">&#9046</p> -->
+            
+        </p>
+        
+        <div class="basin-container">
+
+            <p style="margin-top: 55px;" id="basin-title">
+               Basin of 
+                    <span style="font-size: 14px; text-transform: uppercase;">level {{level}}</span> words
+            </p>
+            <div id="basin">
+                <div><img src="/static/images/wave.png" alt="logo" width="70px"></div>
+                {% for word in words %}
+                    <span class="word">{{word}}</span>
+                {% endfor %}
+
+            </div>
+
+        </div>
+        
+        
+    
 
         {% endif %}
         

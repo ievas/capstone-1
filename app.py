@@ -67,7 +67,7 @@ def get_a_word(curr_level):
 
 
 def translate_a_word(word):
-    print(KEY)
+    
     res = requests.get(f"{API_BASE_URL}/{word}", params={'key':KEY})
     print(res)
     data = res.json()
@@ -82,6 +82,23 @@ def translate_a_word(word):
     translation = translation.split(" ")[0]
 
     return translation
+
+
+def make_a_hint(string):
+    
+    str_len = len(string)
+    hint = ""
+
+    for idx, char in enumerate(string):
+        if idx == 0:
+            hint += char
+        elif idx != (str_len-1):
+            hint += " _ "
+        else:
+            hint += string[str_len -1]
+
+    return hint
+
 
 # *********************************
 @app.before_request
@@ -111,17 +128,20 @@ def home():
 
     if g.user:
         current_level = g.user.current_level_id
-        return render_template('home.html', level = current_level)
+        all_words = read_words(f"words_lvl_{current_level}_esp.txt")
+        return render_template('home.html', level = current_level, words = all_words, clean_footer="oh, yes")
+
+   
 
     
 
-    return render_template('home.html')
+    return render_template('home.html', clean_footer="oh, yes")
 
 
 @app.route('/register')
 def show_register_form():
     form = RegisterForm()
-    return render_template('register.html', form = form)
+    return render_template('register.html', form = form, clean_footer="oh, yes")
 
 
 @app.route('/register', methods=["POST"])
@@ -148,7 +168,7 @@ def register():
 
         except IntegrityError as e:
             flash("Username already taken", 'danger')
-            return render_template('/register.html', form=form)
+            return render_template('/register.html', form=form, clean_footer="oh, yes")
 
         # user_level = UserLevel(user_id = user.id, level_id = 1)
 
@@ -159,7 +179,7 @@ def register():
 
         return redirect("/")
     else:
-        return redirect('/register', form=form)
+        return redirect('/register', form=form, clean_footer="oh, yes")
 
 @app.route('/signin')
 def show_sign_in():
@@ -167,7 +187,7 @@ def show_sign_in():
 
     form = SignInForm()
 
-    return render_template("/signin.html", form=form)
+    return render_template("/signin.html", form=form, clean_footer="oh, yes")
 
 
 @app.route('/signin', methods=["POST"])
@@ -181,9 +201,9 @@ def sign_in():
 
         if user:
             signin(user)
-            return redirect("/challenge")
+            return redirect("/")
 
-    return render_template('/signin.html', form = form)
+    return render_template('/signin.html', form = form, clean_footer="oh, yes")
 
 @app.route('/signout')
 def logout():
@@ -206,8 +226,18 @@ def challenge_page():
     
     # word_and_translation = translate_a_word()
 
+    translation = translate_a_word(word)
+
+    word_hint = make_a_hint(translation)
+
+    user = User.query.get(session[CURRENT_KEY])
+
+    curr_level_id = user.current_level_id
+
+    level_name = Level.query.get(curr_level_id).name
+
     
-    return render_template('start.html', form=form, word=word, guess="")
+    return render_template('start.html', form=form, word=word, guess="", word_hint = word_hint, level=level_name)
  
 
 
@@ -218,8 +248,12 @@ def challenge_page():
 
 def check_answer():
   """Handle user input"""
+
   form = TranslationForm()
+
+ 
   if form.validate_on_submit():
+
     guess = form.translation.data
 
     word = request.form.get('word')
@@ -244,25 +278,25 @@ def check_answer():
                 db.session.add(pioneer_badge)
                 db.session.commit()
 
-            if user.points == 10:
+            if user.points == 6:
                 flash("Great work! You move to Level 3.", "success")
                 user.current_level_id = user.current_level_id + 1
                 db.session.commit()
             
-            if user.points == 15:
+            if user.points == 9:
                 flash("You earned the Prodigy badge!", "success")
                 badge = Badge.query.filter_by(name='prodigy').first()
                 prodigy_badge = UserBadge(user_id=user.id, badge_id=badge.id)
                 db.session.add(prodigy_badge)
                 db.session.commit()
 
-    return render_template('check.html', form=form, word=word, guess=guess, translation=translation)
+    return render_template('start.html', form=form, word=word, guess=guess, translation=translation)
     # return redirect("/challenge/" + translation)
   
   else:
     
+    flash("Please fill out the field.", "danger")
     user = User.query.get(session[CURRENT_KEY])
-
     word = get_a_word(user.current_level_id)
     form = TranslationForm(word=word)
     return render_template('start.html', word=word, form=form)
@@ -305,7 +339,7 @@ def show_user_details():
     # badges = Badge.query.filter_by(id = user_badges).all()
 
 
-    return render_template('details.html', user=user, level = level_name, badges=badge_list, icons=icon_list)
+    return render_template('details.html', user=user, level = level_name, badges=badge_list, icons=icon_list, clean_footer="oh, yes")
 
 
 
