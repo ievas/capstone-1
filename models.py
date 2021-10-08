@@ -62,7 +62,7 @@ class Level(db.Model):
 class Streak(db.Model):
     __tablename__ = 'streaks'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # ?
+    
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     last_login_date = db.Column(db.Date)
 
@@ -76,7 +76,7 @@ class Badge(db.Model):
 
 class UserBadge(db.Model):
     __tablename__ = 'users_badges'
-    # do I need a separate combination id
+    
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 
     badge_id = db.Column(db.Integer, db.ForeignKey('badges.id'), primary_key=True)
