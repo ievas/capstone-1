@@ -11,11 +11,12 @@ beauty = Badge(name='beauty', icon_url="/static/images/woman.png")
 pioneer = Badge(name='pioneer', icon_url="/static/images/goal.png")
 prodigy = Badge(name='prodigy', icon_url="/static/images/mind.png")
 mastermind = Badge(name='mastermind', icon_url="/static/images/idea.png")
+finish = Badge(name='finish', icon_url="static/images/finish-line.png")
 
 level_1 = Level(name='Level 1')
 level_2 = Level(name='Level 2')
 level_3 = Level(name='Level 3')
 
 db.session.add_all([level_1, level_2, level_3])
-db.session.add_all([beauty, pioneer, prodigy, mastermind])
+db.session.add_all([beauty, pioneer, prodigy, mastermind, finish])
 db.session.commit()

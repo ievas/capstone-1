@@ -5,21 +5,22 @@ import random
 import os
 import time
 
-from models import db, connect_db, User, Level, Streak, Badge, UserBadge
+from models import db, connect_db, User, Level, Streak, Badge, UserBadge, Guess
 from forms import TranslationForm, RegisterForm, SignInForm
 
 from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///panico"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL').replace("://", "ql://",1)
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///panico"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#     'DATABASE_URL').replace("://", "ql://",1)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 # app.config["SECRET_KEY"] = "las palabras"
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'las palabras')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+
 
 
 CURRENT_KEY = "curr_user"
@@ -56,16 +57,12 @@ def get_a_word(curr_level):
 
     words = read_words(f"words_lvl_{curr_level}.txt")
 
-
-
     word = random.choice(words)
 
     if word != None:
         return word
     else:
         word = random.choice(words)
-
-
 
 
 
@@ -133,10 +130,6 @@ def home():
         current_level = g.user.current_level_id
         all_words = read_words(f"words_lvl_{current_level}_esp.txt")
         return render_template('home.html', level = current_level, words = all_words, clean_footer="oh, yes")
-
-   
-
-    
 
     return render_template('home.html', clean_footer="oh, yes")
 
@@ -223,11 +216,21 @@ def challenge_page():
     """Get a challenge"""
     # find out the level
     user = User.query.get(session[CURRENT_KEY])
-    word = get_a_word(user.current_level_id)
+    # word = get_a_word(user.current_level_id)
+        
+    while True:
+        
+        word = get_a_word(user.current_level_id)
+        word_guessed = Guess.query.filter(Guess.user_id == user.id, Guess.word == word, Guess.is_correct == True).first()
+
+        if word_guessed is None:
+            break
+        else:
+            print("THIS WAS ALREADY GUESSED CORRECTLY: " + word)
 
     form = TranslationForm(word=word)
-    
-    # word_and_translation = translate_a_word()
+
+    # while word_guessed
 
     translation = translate_a_word(word)
 
@@ -239,13 +242,8 @@ def challenge_page():
 
     level_name = Level.query.get(curr_level_id).name
 
-    
     return render_template('start.html', form=form, word=word, guess="", word_hint = word_hint, level=level_name)
  
-
-
-# get /challenge -> challenge.html
-# post /check_translation -> result.html
 
 @app.route('/challenge', methods=["POST"])
 
@@ -259,13 +257,34 @@ def check_answer():
 
     guess = form.translation.data
 
+    guess = guess.lower()
+
     word = request.form.get('word')
 
     translation = translate_a_word(word)
 
     if g.user:
+
+        user = User.query.get(session[CURRENT_KEY])
+
         if guess == translation:
-            user = User.query.get(session[CURRENT_KEY])
+
+            if Guess.query.filter(Guess.word == word, Guess.user_id == user.id, Guess.is_correct == False).first():
+                guess_to_update = Guess.query.filter_by(word = word).first()
+                guess_to_update.is_correct = True
+                db.session.commit()
+
+            elif Guess.query.filter(Guess.word == word, Guess.user_id == user.id, Guess.is_correct == True).first() is None:
+                print("YES, IT IS NONE. THAT MEANS I CAN'T FIND IT." + word)
+                correct_guess = Guess(word = word, user_id = user.id, is_correct = True)
+                db.session.add(correct_guess)
+                db.session.commit()
+
+            # correct_guess = Guess(word = guess, user_id = user.id, is_correct = True)
+            # wrong_guess = Guess.query.filter_by()
+            # if word already in the table, then update
+            # db.session.add(correct_guess)
+
             user.points = user.points + 1
             db.session.commit()
             
@@ -292,6 +311,17 @@ def check_answer():
                 prodigy_badge = UserBadge(user_id=user.id, badge_id=badge.id)
                 db.session.add(prodigy_badge)
                 db.session.commit()
+            if user.points == 15:
+                flash("Finish line: You've learned 15 words!", "success")
+                badge = Badge.query.filter_by(name='finish').first()
+                finish_badge = UserBadge(user_id=user.id, badge_id=badge.id)
+                db.session.add(finish_badge)
+                db.session.commit()
+        else:
+            if Guess.query.filter(Guess.word == word, Guess.is_correct == False).first() is None:
+                wrong_guess = Guess(word = word, user_id = user.id, is_correct = False)
+                db.session.add(wrong_guess)
+                db.session.commit()
 
     return render_template('start.html', form=form, word=word, guess=guess, translation=translation)
     # return redirect("/challenge/" + translation)
@@ -299,8 +329,8 @@ def check_answer():
   else:
     
     flash("Please fill out the field.", "danger")
-    user = User.query.get(session[CURRENT_KEY])
-    word = get_a_word(user.current_level_id)
+    # user = User.query.get(session[CURRENT_KEY])
+    word = request.form.get('word')
     form = TranslationForm(word=word)
     return render_template('start.html', word=word, form=form)
 
@@ -308,8 +338,6 @@ def check_answer():
 # def solution(word):
 
 #     return render_template('check.html', form=form, word=word, guess=guess, translation=translation)
-
-
 
 
 @app.route('/profile')

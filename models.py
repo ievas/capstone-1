@@ -81,6 +81,15 @@ class UserBadge(db.Model):
 
     badge_id = db.Column(db.Integer, db.ForeignKey('badges.id'), primary_key=True)
 
+class Guess(db.Model):
+    __tablename__ = 'guesses'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    word = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    is_correct = db.Column(db.Boolean, nullable=False)
+
+
 
 
 
