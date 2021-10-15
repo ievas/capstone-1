@@ -146,6 +146,7 @@ def register():
         del session[CURRENT_KEY]
 
     form = RegisterForm()
+
     if form.validate_on_submit():
         try:
             user = User.register(
@@ -157,9 +158,6 @@ def register():
                 points = 0,
                 current_level_id = 1
             )
-
-            
-
             db.session.commit()
 
         except IntegrityError as e:
@@ -175,7 +173,7 @@ def register():
 
         return redirect("/")
     else:
-        return redirect('/register', form=form, clean_footer="oh, yes")
+        return redirect('/register')
 
 @app.route('/signin')
 def show_sign_in():
@@ -275,7 +273,7 @@ def check_answer():
                 db.session.commit()
 
             elif Guess.query.filter(Guess.word == word, Guess.user_id == user.id, Guess.is_correct == True).first() is None:
-                print("YES, IT IS NONE. THAT MEANS I CAN'T FIND IT." + word)
+                # print("YES, IT IS NONE. THAT MEANS I CAN'T FIND IT." + word)
                 correct_guess = Guess(word = word, user_id = user.id, is_correct = True)
                 db.session.add(correct_guess)
                 db.session.commit()
@@ -285,18 +283,19 @@ def check_answer():
             # if word already in the table, then update
             # db.session.add(correct_guess)
 
-            user.points = user.points + 1
+            if user.points < 15:
+                user.points = user.points + 1
+            else:
+                user.points = 15
+
             db.session.commit()
             
             if user.points == 3:
                 
                 flash("You earned the Pioneer badge and move to Level 2!", "success")
                 badge = Badge.query.filter_by(name='pioneer').first()
-               
                 user.current_level_id = user.current_level_id + 1
-                
                 pioneer_badge = UserBadge(user_id=user.id, badge_id=badge.id)
-
                 db.session.add(pioneer_badge)
                 db.session.commit()
 
@@ -314,9 +313,11 @@ def check_answer():
             if user.points == 15:
                 flash("Finish line: You've learned 15 words!", "success")
                 badge = Badge.query.filter_by(name='finish').first()
-                finish_badge = UserBadge(user_id=user.id, badge_id=badge.id)
-                db.session.add(finish_badge)
-                db.session.commit()
+                if UserBadge.query.filter(UserBadge.user_id == user.id, UserBadge.badge_id == badge.id).first() is None:
+                    finish_badge = UserBadge(user_id=user.id, badge_id=badge.id)
+                    db.session.add(finish_badge)
+                    db.session.commit()
+                return render_template('finish.html', clean_footer="oh, yes")
         else:
             if Guess.query.filter(Guess.word == word, Guess.is_correct == False).first() is None:
                 wrong_guess = Guess(word = word, user_id = user.id, is_correct = False)
@@ -371,6 +372,20 @@ def show_user_details():
 
 
     return render_template('details.html', user=user, level = level_name, badges=badge_list, icons=icon_list, clean_footer="oh, yes")
+
+
+@app.route('/reset', methods=["GET","POST"])
+
+def reset():
+    user = User.query.get(session[CURRENT_KEY])
+    UserBadge.query.delete()
+    Guess.query.delete()
+    user.current_level_id = 1
+    user.points = 0
+    db.session.commit()
+
+    return redirect("/challenge")
+
 
 
 

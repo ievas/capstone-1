@@ -138,7 +138,7 @@ a:hover {
 #basin{
     display:none;
     width:700px;
-    height: 400px;
+    height: 445px;
     color: ghostwhite;
     border: solid;
     border-radius: 10% 30% 50% 70%;
@@ -149,6 +149,10 @@ a:hover {
 
 #basin-title:hover + #basin{
     display:block;
+    z-index: 1; 
+    position: absolute; 
+    top: 0px; 
+    left: 0px;
 }
 
 .word{

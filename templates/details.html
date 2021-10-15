@@ -4,10 +4,23 @@
     <h1>{{user.username}}'s Achievements</h1>
 
     <div class="achievements" style="text-align: left; margin-top: 25px;">
+        {%if user.points == 15%}
+            <h4 style="margin-top: 25px;">Badges: 
+                <ul style="display:flex; justify-content: space-between;">
+                    {%for i in range(badges|length)%}
+                        <li style="margin-top: 15px; margin-right: 10px;" class="badge-list">
+                                <img width="80px" src={{icons[i]}}>
+                            {{badges[i].capitalize()}}
+                        </li>
+                    {%endfor%}
+                </ul>
+            </h4>
+        {%else%}
+        
         <h4>Current level: <a href="/challenge"><span>{{level}}</span></a></h4>
         {%if badges%}
         <h4 style="margin-top: 25px;">Badges: 
-            <ul >
+            <ul style="display:flex; justify-content: space-between;"">
                 {%for i in range(badges|length)%}
                     <li style="margin-top: 15px;" class="badge-list">
                             <img width="80px" src={{icons[i]}}>
@@ -16,7 +29,8 @@
                 {%endfor%}
             </ul>
         </h4>
+            {%endif%}
         {%endif%}
-        </div>
+    </div>
 </div>
 {% endblock %}

@@ -10,8 +10,15 @@
                 <a style="margin-right: 20px" href="/signin" class="dive" >Sign in</a>
                 <a style="margin-left: 20px" href="/register" class="dive">Register</a></div>
         </div>
-    
-            
+
+        {%elif g.user.points == 15%}
+
+        <p style="margin-top: 40px;">
+            <a href="/reset"><h7 class="dive">Care for another round?</h7></a> 
+        </p>
+
+        </div>
+
         {% else %}
 
         <p style="margin-top: 40px;">

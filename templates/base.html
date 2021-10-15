@@ -75,9 +75,6 @@
 
 <footer class="footer navbar-default" role="contentinfo">
 
-    
-    
-  
       {%if guess%}
         {%if guess != translation%}
 
@@ -106,27 +103,28 @@
       {%endif%}
     {%else%}
         {%if clean_footer%}
-        <div>YES.</div>
+          {%if g.user.points == 15%}
+          
+            <a href="/reset" style="text-decoration: none;
+            color: inherit;">RESET</a>
+          
+            <div style="display:none">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+          {%else%}
+          <div>YES.</div>
+          {%endif%}
         {%else%}
           <div class="regular" style="display: flex; justify-content: space-around; align-items: center;">
 
             <a href="/challenge" id="skip" style="text-decoration: none;
               color: inherit;">SKIP</a>
             
-            
             <button id="hint-link" style="background: none; border:none; font-size: 20px;" onclick="toggleDiv('hint')">HINT</button>
-            
-            
             
             <button id="check" style="background: none; border: none">CHECK</button>
           </div>
           {%endif%}
     {%endif%}
 
-
-    
-    
-  
   </footer>
 
 

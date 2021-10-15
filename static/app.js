@@ -14,13 +14,16 @@ let form = $('#translate-form');
 let textarea = document.querySelector("textarea");
 
 
-checkButton = document.getElementById("check");
+let checkButton = document.getElementById("check");
 
-checkButton.addEventListener("click", function(e){
-    
-    e.preventDefault();
-    form.submit()
-})
+if(checkButton){
+    checkButton.addEventListener("click", function(e){
+        e.preventDefault();
+        form.submit();
+    })
+}
+
+
 
 
 
