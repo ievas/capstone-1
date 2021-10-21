@@ -12,9 +12,9 @@ from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///panico"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL').replace("://", "ql://",1)
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///panico"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+#     'DATABASE_URL').replace("://", "ql://",1)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 # app.config["SECRET_KEY"] = "las palabras"
@@ -162,19 +162,15 @@ def register():
 
         except IntegrityError as e:
             flash("Username already taken", 'danger')
-            return render_template('/register.html', form=form, clean_footer="oh, yes")
+            return render_template('register.html', form=form)
 
-        # user_level = UserLevel(user_id = user.id, level_id = 1)
-
-        # db.session.add_all([user_level])
-        # db.session.commit()
-        
         signin(user)
-
         return redirect("/")
     else:
         return redirect('/register')
 
+        
+    
 @app.route('/signin')
 def show_sign_in():
     """Show log in form"""
@@ -212,6 +208,11 @@ def logout():
 @app.route('/challenge', methods=["GET"])
 def challenge_page():
     """Get a challenge"""
+
+    if not g.user:
+        flash("Please sign in or register.", "danger")
+        return redirect("/")
+
     # find out the level
     user = User.query.get(session[CURRENT_KEY])
     # word = get_a_word(user.current_level_id)
@@ -253,7 +254,7 @@ def check_answer():
  
   if form.validate_on_submit():
 
-    guess = form.translation.data
+    guess = form.guess.data
 
     guess = guess.lower()
 
@@ -347,7 +348,7 @@ def show_user_details():
     """Show user profile information and progress"""
 
     if not g.user:
-        flash("Access unauthorized.", "danger")
+        flash("Please sign in or register.", "danger")
         return redirect("/")
 
     
@@ -385,6 +386,9 @@ def reset():
     db.session.commit()
 
     return redirect("/challenge")
+
+
+
 
 
 

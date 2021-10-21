@@ -8,7 +8,7 @@ from wtforms.validators import InputRequired, Length, Email
 class TranslationForm(FlaskForm):
     """Form for entering a translation."""
 
-    translation = TextAreaField('Translation', validators=[InputRequired()])
+    guess = StringField('Guess', validators=[InputRequired()])
     word = HiddenField("word")
 
 class RegisterForm(FlaskForm):

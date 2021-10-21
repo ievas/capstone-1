@@ -34,9 +34,6 @@
       <!-- <a href="/" class="navbar-brand"><h1 id="title">pánico</h1></a> -->
     </div>
 
-
-    
-
       {% if not g.user %}
       <div class="nav navbar-nav navbar-right">
       <a href="/register" style="text-transform: uppercase; font-size: 16px;">Register</a>
@@ -82,6 +79,7 @@
           align-items: center;">
 
             <img src="/static/images/thunder.png" alt="thunder" width="90px">
+            <div style="display:none">Icons made by <a href="" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
             
             <div>Correct translation: <span style="border: solid 1px #ff4f4f; margin:5px; padding:15px; border-radius: 50%;" onmouseover="pronounce()">{{translation}}</span></div>
           
@@ -104,11 +102,9 @@
     {%else%}
         {%if clean_footer%}
           {%if g.user.points == 15%}
-          
+
             <a href="/reset" style="text-decoration: none;
             color: inherit;">RESET</a>
-          
-            <div style="display:none">Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
           {%else%}
           <div>YES.</div>
           {%endif%}
